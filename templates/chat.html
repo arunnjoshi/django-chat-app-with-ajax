@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHat</title>
+    <style media="screen">
+    .left a{
+      float:right;
+      margin-right: 10%;
+    }
+    .main{
+      float: left;
+    }
+    #msg{
+      width: 200px;
+      height: 25px;
+    }
+    #btn{
+      height: 30px;
+      width: 50px;
+    }
+    .msg{
+      margin: 0 20%;
+      float:left;
+    }
+    .chat{
+      float: right;
+      margin-right:10%;
+
+    }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="left">
+  <h4 style="display:inline">sender: {{data.sender}}</h4> <h4 style="display:inline">receiver: {{data.receiver}}</h4>
+  <a href="{% url 'logout' %}">logout</a>
+  <h1>Chat app</h1>
+</div>
+<div class="main">
+  <input type="text" id="msg" placeholder="Enetr msg">
+  <button type="button" id='btn'>Send</button>
+</div>
+<div class="msg">
+  <h1>Send</h1>
+  <ul>
+  {% for chat in chat_sender %}
+  <li>{{chat.sender}} :{{chat.chat}}</li>
+  {% endfor %}
+  </ul>
+</div>
+<div class="chat">
+  <h1>Receive</h1>
+  <ul class="chatul">
+  {% for chat in chat_receive %}
+  <li id="{{chat.id}}">{{chat.sender}} :{{chat.chat}}</li>
+  {% endfor %}
+  </ul>
+</div>
+<script type="text/javascript">
+  $('#btn').click(function(event) {
+    /* Act on the event */
+    messages=$('#msg').val();
+    if (messages.length>0) {
+      $.ajax({
+      url: '{% url "com" %}',
+      type: 'POST',
+      dataType: 'json',
+      data: {msg: messages,receiver:'{{data.receiver}}',csrfmiddlewaretoken:"{{csrf_token}}"}
+    })
+    .done(function(data) {
+      $('#msg').val('');
+      $('.msg ul').append('<li> {{data.sender}} :'+messages+' </li>');
+    })
+    .fail(function() {
+      console.log("error");
+    })
+  }
+
+
+
+  // RECEIVE MESSAGE WITH AJAX
+  });
+function receive() {
+  var lastli = $('.chatul li:last-child').prop('id')
+
+  $.ajax({
+    url:'{% url "receive_data" %}',
+    type: 'POST',
+    dataType: 'json',
+    data: {receiver:'{{data.receiver}}',csrfmiddlewaretoken:"{{csrf_token}}"}
+  })
+  .done(function(a) {
+    var id = 0
+    if (a.id != lastli){
+    $('.chat ul ').append('<li id='+a.id+'> {{data.receiver}} :'+a.chat+' </li>');
+  }
+  })
+  .fail(function() {
+    console.log("error");
+  })
+}
+setInterval(receive,1000);
+
+</script>
+</body>
+</html>

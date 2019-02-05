@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div class="user-list">
+      <ul>
+          {% for users in user_list %}
+          {% if user != users %}
+            <li><a href='{% url "chat" users.id %}'>{{users.username}}</a></li>
+          {% endif %}
+          {% endfor %}
+      </ul>
+    </div>
+  </body>
+</html>

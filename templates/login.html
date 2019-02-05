@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style media="screen">
+      #btn{
+        margin-left: 30%;
+      }
+    </style>
+</head>
+<body>
+  <div class="login-form" style="margin:10% 40%">
+    <form  method="post">
+      {% csrf_token %}
+      {{form.as_p}}
+      <button type="submit"  id='btn'>Sign In</button>
+    </form>
+    <br>
+    <a href="{% url 'register' %}">Sign Up</a>
+  </div>
+</body>
+</html>
